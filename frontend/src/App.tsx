@@ -26,10 +26,10 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="login" element={<Login />} />
-        <Route path="books" element={<Books />} />
-        <Route path="pdf" element={<Pdf />} />
-        <Route path="current-request" element={<CurrentRequest />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/books" element={<Books />} />
+        <Route path="/pdf" element={<Pdf />} />
+        <Route path="/current-request" element={<CurrentRequest />} />
         <Route path="Test" element={<Tests />} />
       </Routes>
       

@@ -6,7 +6,7 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('book', (table) => {
     table.increments('id').primary()
     table.string('name', 256)
-    table.string('indexName', 128)
+    table.string('indexName', 128).index()
     table.float('price')
     table.integer('publisherId')
     table.string('publisherCode', 128)

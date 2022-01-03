@@ -3,9 +3,6 @@ import http from 'http'
 import express from 'express'
 import cors from 'cors'
 
-import path from 'path'
-import php from 'php'
-
 export default class HttpServer {
   app: express.Express
   server: http.Server
@@ -34,20 +31,16 @@ export default class HttpServer {
     this.app.use(express.text({ limit: '100mb' }))
     this.app.use(cors())
 
+    this.app.use('/',express.static('web'))
+    this.app.use('/login',express.static('web'))
+    this.app.use('/books',express.static('web'))
+    this.app.use('/pdf',express.static('web'))
+    this.app.use('/current-request',express.static('web'))
+
     this.routers.forEach(r => {
       this.app.use('/api', r)
     })
 
-    this.app.set('views', 'web')
-    this.app.set('view engine', 'php')
-    this.app.engine('php', php.__express)
-
-    this.app.get('/', (req, res) => {
-      res.render('index.php', {
-        hello: 'world'
-      })
-    })
-    
     return this.server
   }
 

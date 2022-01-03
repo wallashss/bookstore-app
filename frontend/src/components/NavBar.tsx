@@ -21,16 +21,16 @@ type PageType = {
   href: string
 }
 const allPages = [
-  {title: 'Pedido Aberto', href: 'current-request'},
-  {title: 'Livros', href: 'books'},
+  {title: 'Pedido Aberto', href: '/current-request'},
+  {title: 'Livros', href: '/books'},
   // {title: 'Pedidos', href: 'requests'},
   // {title: 'Minhas Pendências', href: 'my-requests'},
   // {title: 'Todas Pendências', href: 'all-requests'},
 ];
 
 const onlyPublicPages = [
-  {title: 'Livros', href: 'books'},
-  {title: 'Entrar', href: 'login'},
+  {title: 'Livros', href: '/books'},
+  {title: 'Entrar', href: '/login'},
 ];
 
 // const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
