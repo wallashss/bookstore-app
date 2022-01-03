@@ -2,13 +2,9 @@
 import {networkInterfaces} from 'os'
 import express from 'express'
 import HttpServer from "../infrastructure/http/HttpServer";
-import UsersRepository from "../repositories/UsersRepository";
-
-
 
 
 export default class InfoControler {
-
 
   constructor(
     private readonly httpServer : HttpServer,

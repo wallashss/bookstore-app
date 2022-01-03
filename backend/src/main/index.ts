@@ -13,6 +13,7 @@ import RequestItemController from '../controllers/RequestItemController';
 import RequestItemRepository from '../repositories/RequestItemRepository';
 import UserControler from '../controllers/UserController';
 import InfoControler from '../controllers/InfoController';
+import QueryController from '../controllers/QueryController';
 
 async function main() {
 
@@ -30,6 +31,7 @@ async function main() {
   const requestController = new RequestControler(httpServer, requestRepo, requestItemRepo)
   const requestItemController = new RequestItemController(httpServer, requestItemRepo)
   new InfoControler(httpServer, env.port)
+  new QueryController(httpServer, dbConnection)
   await httpServer.start()
   
 }

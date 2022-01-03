@@ -22,13 +22,14 @@ export default class BooksRepository {
         'book.price', 
         'publisher.name as publisherName')
       .innerJoin('publisher', 'book.publisherId', 'publisher.id')
-      .limit(500)
     
     if(search) {
-      return query.where('book.indexName', 'like', `%${search}%`)
+      return query
+        .where('book.indexName', 'like', `%${search}%`)
+        .orWhere('book.name', 'like', `%${search}%`)
     }
     else {
-      return query
+      return query.limit(500)
     }
   }
 
