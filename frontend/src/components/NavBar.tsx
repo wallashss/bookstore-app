@@ -23,9 +23,9 @@ type PageType = {
 const allPages = [
   {title: 'Pedido Aberto', href: '/current-request'},
   {title: 'Livros', href: '/books'},
-  // {title: 'Pedidos', href: 'requests'},
-  // {title: 'Minhas Pendências', href: 'my-requests'},
-  // {title: 'Todas Pendências', href: 'all-requests'},
+  {title: 'Pedidos', href: '/requests'},
+  {title: 'Minhas Pendências', href: '/pending-books'},
+  {title: 'Todas Pendências', href: '/all-pending-books'},
 ];
 
 const onlyPublicPages = [

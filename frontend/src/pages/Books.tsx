@@ -21,6 +21,7 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { addItem } from '../services/RequestItemService';
 import NavBar from '../components/NavBar';
+import { Typography } from '@mui/material';
 
 
 type BookRow = {
@@ -51,9 +52,13 @@ export default function Books() {
   });
 
   useEffect(() => {
-    getBooks().then((books) => {
-      setRows(books)
-    })
+
+    const userId = getUserId();
+    if(!userId) {
+      getBooks().then((books) => {
+        setRows(books)
+      })
+    }
   }, [])
 
   useEffect(() => {
@@ -63,6 +68,9 @@ export default function Books() {
       getOpenRequest(userId).then(req => {
         setRequest(req)
         setEnableAdd(false)
+        return getBooks().then((books) => {
+          setRows(books)
+        })
       })
       .catch(err => {
         setStatusPopup({...statusPopup, 
@@ -106,7 +114,6 @@ export default function Books() {
 
     console.log(item)
     addItem(item).then(() => {
-      console.log("???")
       setStatusPopup({...statusPopup, 
         open: true, 
         message: `Adicionado "${book.name}"`,
@@ -114,7 +121,6 @@ export default function Books() {
       })
     })
     .catch(err => {
-      console.log("ERROR")
       console.log(err);
       setStatusPopup({...statusPopup, 
         open: true, 
@@ -129,12 +135,13 @@ export default function Books() {
       <ThemeProvider theme={theme}>
         <NavBar></NavBar>
         <Container>
+        <Typography variant='h4'sx={{mt: 2}} align='left'>Livros</Typography>
           <CssBaseline />
           <Box
             component="form" 
             onSubmit={handleSearch}
             sx={{
-              marginTop: 8,
+              mt: 2,
               marginBottom: 2,
               display: 'flex',
               flexDirection: 'row',

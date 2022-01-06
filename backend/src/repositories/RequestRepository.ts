@@ -33,12 +33,30 @@ export default class RequestRepository {
     return request
   }
 
-  async getRequests (sellerId : number) {
+  async getSellerRequests (sellerId : number, all : boolean, search : string) {
 
-    return await this.db('book_request')
-      .select('book_request.*', 'seller.name as sellerName')
+    const subquery = this.db('book_request_item')
+          .count('*')
+          .where('book_request_item.requestId', '=', this.db.ref('book_request.id'))
+          .as('bookCount')
+
+    const mainQuery = this.db('book_request')
+      .select(
+        'book_request.*', 
+        'seller.name as sellerName',
+        subquery
+      )
       .leftJoin('seller', 'seller.id', 'book_request.sellerId')
-      .where({sellerId})    
+      .andWhere('book_request.isClosed', '=', true)
+      
+    const query = all ?
+      mainQuery :
+      mainQuery.where({sellerId})
+
+    return search ? 
+      query.where('book_request.client', 'like', `%${search}%`) :
+      query
+
   }
 
   async insertNewRequest (sellerId : number, requestDate: Date) {

@@ -3,7 +3,6 @@ import { Knex } from "knex";
 import Book from "models/Book";
 import DBConnection from "../infrastructure/db/DBConnection";
 
-
 export default class BooksRepository {
 
   db : Knex

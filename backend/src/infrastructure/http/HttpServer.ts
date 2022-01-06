@@ -31,15 +31,13 @@ export default class HttpServer {
     this.app.use(express.text({ limit: '100mb' }))
     this.app.use(cors())
 
-    this.app.use('/',express.static('web'))
-    this.app.use('/login',express.static('web'))
-    this.app.use('/books',express.static('web'))
-    this.app.use('/pdf',express.static('web'))
-    this.app.use('/current-request',express.static('web'))
-
     this.routers.forEach(r => {
       this.app.use('/api', r)
     })
+    
+    this.app.use(express.static('web'))
+    this.app.use('/*',express.static('web'))
+    
 
     return this.server
   }

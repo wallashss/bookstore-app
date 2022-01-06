@@ -197,7 +197,8 @@ export default function CurrentRequest() {
         <NavBar ></NavBar>
         <Container sx={{mb: 4}} >
           <CssBaseline />
-          <Box component="form" sx={{ flexGrow: 1, mt: 8 }}>
+          <Typography variant='h4'sx={{mt: 2}} align='left'>Pedido Aberto</Typography>
+          <Box component="form" sx={{ flexGrow: 1, mt: 2 }}>
             <Grid container spacing={1}>
               <Grid item xs={6}>
                 <TextField 
@@ -293,6 +294,7 @@ export default function CurrentRequest() {
           <Table sx={{ minWidth: 650}} aria-label="simple table">
             <TableHead>
               <TableRow>
+                <TableCell align='center'>#</TableCell>
                 <TableCell align='center'>ID</TableCell>
                 <TableCell align='center'>Código da Editora</TableCell>
                 <TableCell>Nome</TableCell>
@@ -310,6 +312,7 @@ export default function CurrentRequest() {
                   {/* <TableCell component="th" scope="row">
                     {row.id}
                   </TableCell> */}
+                  <TableCell align='center'>{idx+1}</TableCell>
                   <TableCell align='center'>{row.bookId}</TableCell>
                   <TableCell align='center'>{row.publisherCode || "--"}</TableCell>
                   <TableCell >{row.name}</TableCell>
@@ -332,6 +335,7 @@ export default function CurrentRequest() {
                 >
                   <TableCell ></TableCell>
                   <TableCell ></TableCell>
+                  <TableCell ></TableCell>
                   <TableCell >Encapamento</TableCell>
                   <TableCell ></TableCell>
                   <TableCell align='center'>{`R$ ${(Number(request.wrapPrice) || 0)?.toFixed(2)}`}</TableCell>
@@ -343,6 +347,7 @@ export default function CurrentRequest() {
                 >
                   <TableCell ></TableCell>
                   <TableCell ></TableCell>
+                  <TableCell ></TableCell>
                   <TableCell >Desconto</TableCell>
                   <TableCell ></TableCell>
                   <TableCell align='center'>{`R$ -${(Number(request.discount) || 0)?.toFixed(2)}`}</TableCell>
@@ -352,6 +357,7 @@ export default function CurrentRequest() {
                   key={-3}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
+                  <TableCell ></TableCell>
                   <TableCell ></TableCell>
                   <TableCell ></TableCell>
                   <TableCell ><Typography sx={{fontWeight: 'bold'}}>TOTAL</Typography> </TableCell>

@@ -23,7 +23,7 @@ export default class UserControler {
     }
     catch(err) {
       console.log(err)
-      res.status(500).json(err)
+      res.status(500).json({message: err.message, name: err.name})
     }
   }
 

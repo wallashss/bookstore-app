@@ -33,7 +33,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { useSearchParams } from 'react-router-dom'
 
-
+import { BookRow } from '../models/BookRow';
 const theme = createTheme();
 
 const Alert = React.forwardRef(function Alert(props: any, ref: any) {
@@ -46,14 +46,7 @@ const SAVE_SUCCESS_MSG = 'Pedido Salvo com Sucesso!'
 const SAVE_ERROR_MSG = 'Erro ao salvar o pedido!'
 const LOAD_ERROR_MSG = 'Erro ao carregar o pedido!'
 
-type BookRow = {
-  id: number,
-  publisherCode: string,
-  name: string,
-  bookId: number, 
-  publisherName: string,
-  currentPrice: number
-}
+
 
 export default function CurrentRequest() {
 

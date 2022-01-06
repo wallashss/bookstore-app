@@ -57,3 +57,17 @@ export const updateRequest = async (userId: string, request: any) => {
 
   return res.json()
 }
+
+export const listRequests = async (userId: string, all: boolean, search: string = '') => {
+
+  const q = `all=${all ? '1' : '0'}&userId=${userId}&q=${search ?? ''}`
+  const url = `${ApiUrl}/requests?${q}`;
+
+  const res = await fetch(url)
+
+  if(!res.ok) {
+    throw new Error('');
+  }
+
+  return res.json()
+}

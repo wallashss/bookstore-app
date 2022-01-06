@@ -40,7 +40,7 @@ export default class RequestControler {
     }
     catch(err) {
       console.log(err);
-      res.status(500).json(err)
+      res.status(500).json({message: err.message, name: err.name})
     }
   }
 
@@ -72,7 +72,7 @@ export default class RequestControler {
     }
     catch(err) {
       console.log(err);
-      res.status(500).json(err)
+      res.status(500).json({message: err.message, name: err.name})
     }
   }
 
@@ -90,17 +90,19 @@ export default class RequestControler {
 
     try {
 
-      const userId = Number(req.headers.userid as string)
-    
+      const userId = Number(req.query.userId as string)
+      const search = req.query.q as string
+      const all = Number(req.query.all) === 1
       if(!userId) {
         throw new Error('No user id!')
       }
-      const requests = await this.requestRepo.getRequests(userId);
+
+      const requests = await this.requestRepo.getSellerRequests(userId, all, search);
       res.json(requests)
     }
     catch(err) {
       console.log(err)
-      res.status(500).json(err)
+      res.status(500).json({message: err.message, name: err.name})
     }
   }
 
@@ -114,7 +116,7 @@ export default class RequestControler {
     }
     catch(err) {
       console.log(err)
-      res.status(500).json(err)
+      res.status(500).json({message: err.message, name: err.name})
     }
   }
 

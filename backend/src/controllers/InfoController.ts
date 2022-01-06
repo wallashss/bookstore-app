@@ -36,12 +36,12 @@ export default class InfoControler {
   
       console.log(results)
   
-      const ip = results["en0" ] || results["eth0"] || Object.keys(results)
+      const ip = results["en0" ] || results["eth0"] || Object.values(results)
       res.json({ip: `${ip[0]}:${this.serverPort}`})
     }
     catch(err){
       console.log(err.message)
-      res.status(500).json(err)
+      res.status(500).json({message: err.message, name: err.name})
     }
   }
 

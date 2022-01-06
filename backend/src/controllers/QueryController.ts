@@ -4,7 +4,6 @@ import DBConnection from "../infrastructure/db/DBConnection";
 
 export default class QueryController {
 
-
   constructor(
     private readonly httpServer : HttpServer,
     private readonly dbConnection : DBConnection
@@ -38,7 +37,6 @@ export default class QueryController {
     catch(err) {
       console.log(err)
       res.status(500).json({message: err.message})
-
     }
   }
 

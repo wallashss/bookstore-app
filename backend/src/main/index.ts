@@ -14,6 +14,8 @@ import RequestItemRepository from '../repositories/RequestItemRepository';
 import UserControler from '../controllers/UserController';
 import InfoControler from '../controllers/InfoController';
 import QueryController from '../controllers/QueryController';
+import PendingBookRepository from '../repositories/PendingBookRepository';
+import PendingController from '../controllers/PendingController';
 
 async function main() {
 
@@ -23,13 +25,15 @@ async function main() {
   const usersRepo = new UsersRepository(dbConnection);
   const requestRepo = new RequestRepository(dbConnection)
   const requestItemRepo = new RequestItemRepository(dbConnection)
+  const pendingBookRepo = new PendingBookRepository(dbConnection)
 
   const httpServer = new HttpServer(env.host, env.port);
-  const booksController = new BooksController(httpServer, booksRepo)
-  const userController = new UserControler(httpServer, usersRepo)
-  const loginController = new LoginController(httpServer, usersRepo)
-  const requestController = new RequestControler(httpServer, requestRepo, requestItemRepo)
-  const requestItemController = new RequestItemController(httpServer, requestItemRepo)
+  new BooksController(httpServer, booksRepo)
+  new UserControler(httpServer, usersRepo)
+  new LoginController(httpServer, usersRepo)
+  new RequestControler(httpServer, requestRepo, requestItemRepo)
+  new RequestItemController(httpServer, requestItemRepo)
+  new PendingController(httpServer, pendingBookRepo)
   new InfoControler(httpServer, env.port)
   new QueryController(httpServer, dbConnection)
   await httpServer.start()
