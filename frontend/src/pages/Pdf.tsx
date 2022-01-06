@@ -144,7 +144,7 @@ export default function CurrentRequest() {
                   onChange={e => setRequest({...request, client: e.target.value})}
                   />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={8}>
                 <TextField 
                   name='name'
                   fullWidth
@@ -152,6 +152,16 @@ export default function CurrentRequest() {
                   label="Cliente" 
                   value={request.client || "--"}
                   onChange={e => setRequest({...request, client: e.target.value})}
+                  />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField 
+                  name='phone'
+                  fullWidth
+                  size="small"
+                  label="Telefone" 
+                  value={request.clientPhone || "--"}
+                  onChange={e => setRequest({...request, clientPhone: e.target.value})}
                   />
               </Grid>
             </Grid>

@@ -2,8 +2,8 @@
 import {ApiUrl} from './Api'
 
 export const getPendingBooks = async (
-  userId?: string,
-  search?: string) => {
+  userId?: string | null,
+  search?: string | null) => {
 
   const url = `${ApiUrl}/pending?sellerId=${userId || ""}&q=${search || ""}`;
 
