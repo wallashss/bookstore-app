@@ -28,7 +28,7 @@ export default class RequestItemRepository {
 
   async addItem (book : RequestItem) {
     return await this.db('book_request_item')
-      .insert({...book, status: book.status || RequestItemStatus.Pending})
+      .insert({...book, status: book.status || RequestItemStatus.None})
   }
 
   async removeRequestBook (id : number) {

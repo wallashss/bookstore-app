@@ -1,7 +1,10 @@
 import HttpServer from "../infrastructure/http/HttpServer";
 import express from 'express'
-import RequestRepository from "repositories/RequestRepository";
-import RequestItemRepository from "repositories/RequestItemRepository";
+import RequestRepository from "../repositories/RequestRepository";
+import RequestItemRepository from "../repositories/RequestItemRepository";
+import RequestPdfService from "../services/RequestPdfService";
+import PendingBookRepository from "../repositories/PendingBookRepository";
+import { RequestItemStatus } from "../models/RequestItem";
 
 
 export default class RequestControler {
@@ -10,12 +13,15 @@ export default class RequestControler {
   constructor(
     private readonly httpServer : HttpServer,
     private readonly requestRepo : RequestRepository,
-    private readonly requestItemRepo : RequestItemRepository
+    private readonly requestItemRepo : RequestItemRepository,
+    private readonly pendingBookRepo : PendingBookRepository,
+    private readonly requestPdfService : RequestPdfService
   ) {
     const router = express.Router()
 
     router.get('/request', (req, res) => this.getOpenRequest(req, res))
     router.get('/request/:id', (req, res) => this.getRequest(req, res))
+    router.get('/request/:id/pdf', (req, res) => this.getRequestPdf(req, res))
     router.get('/requests', (req, res) => this.getRequests(req, res))
     router.post('/close-request', (req, res) => this.postCloseRequest(req, res))
     router.put('/request', (req, res) => this.putRequest(req, res))
@@ -37,6 +43,20 @@ export default class RequestControler {
       const books = await this.requestItemRepo.getRequestBooks(request.id)
 
       res.send({...request, books})
+    }
+    catch(err) {
+      console.log(err);
+      res.status(500).json({message: err.message, name: err.name})
+    }
+  }
+
+  async getRequestPdf(req : express.Request, res : express.Response) {
+
+    try {
+      const requestId = Number(req.params.id as string)
+  
+      res.set('content-type', 'application/pdf')
+      await this.requestPdfService.generateRequestPdf(requestId, res)
     }
     catch(err) {
       console.log(err);
@@ -82,7 +102,11 @@ export default class RequestControler {
     if(!userId) {
       throw new Error('No user id!')
     }
+
+    const request = await this.requestRepo.getOpenRequest(userId);
+    console.log(request.id)
     await this.requestRepo.closeRequest(userId);
+    await this.pendingBookRepo.updateRequestItemStatusForRequest(request.id, RequestItemStatus.Pending);
     res.json({status: 'ok'})
   }
 

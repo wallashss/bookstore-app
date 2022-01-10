@@ -38,7 +38,7 @@ export default class BooksControler {
       const books = rows.map((row : any) => {
 
         const price = typeof row.price === 'string' ?
-          Number(row.price.replace(',', '.')) :
+          Number(row.price.trim().replace('R$', '').replace(',', '.')) :
           row.price
         
         const name = Object.entries(row)

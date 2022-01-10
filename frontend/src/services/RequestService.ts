@@ -13,6 +13,11 @@ export const getOpenRequest = async (userId: string) => {
   return res.json()
 }
 
+export const getRequestPdfUrl = (requestId : number) => {
+
+  return `${ApiUrl}/request/${requestId}/pdf`;
+}
+
 
 export const getRequest = async (requestId: number) => {
 

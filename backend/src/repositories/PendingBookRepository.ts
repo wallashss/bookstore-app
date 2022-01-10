@@ -28,6 +28,7 @@ export default class PendingBookRepository {
       .innerJoin('publisher', 'book.publisherId', 'publisher.id')
       .innerJoin('book_request', 'book_request.id', 'book_request_item.requestId')  
       .innerJoin('seller', 'seller.id', 'book_request.sellerId')
+      .whereIn('status', ['P', 'R', 'A'])
 
     const sellerQuery = sellerId ? 
       query.where('book_request.sellerId', sellerId) :
@@ -38,11 +39,57 @@ export default class PendingBookRepository {
       sellerQuery
   }
 
+  async getPendingPublishers () {
+
+    const rows = await this.db('book_request_item')
+      .select(
+        'publisher.name as name',
+        'publisher.id as id')
+      .innerJoin('book', 'book.id', 'book_request_item.bookId')
+      .innerJoin('publisher', 'book.publisherId', 'publisher.id')
+      .innerJoin('book_request', 'book_request.id', 'book_request_item.requestId')
+      .where('status', 'P')
+      .distinct()
+      .orderBy('name')
+
+    return rows
+
+  }
+
   async updateRequestItemStatus(id: number, status: RequestItemStatus) {
 
     return this.db('book_request_item')
       .where({id})
       .update({status: status})
+  }
+
+  async updateRequestItemStatusForRequest(requestId: number, status: RequestItemStatus) {
+    return this.db('book_request_item')
+      .where({requestId})
+      .update({status})
+  }
+  
+  async updateRequestItemStatusForPublisher(publisherId: number, status: RequestItemStatus) {
+
+    const subquery = this.db('book').where({publisherId}).select('id')
+    return this.db('book_request_item')
+      .whereIn('bookId', subquery)
+      .andWhere('status', 'P')
+      .update({status})
+  }
+
+  async getPendingFromPublisher(publisherId: number) {
+
+    // const subquery = this.db('book').where({publisherId}).select('id')
+    return this.db('book_request_item')
+      .innerJoin('book', 'book.id', 'book_request_item.bookId')
+      .where('book.publisherId', publisherId)
+      .andWhere('book_request_item.status', 'P')
+      .select('book_request_item.*', 'book.name', 'book.publisherCode')
+      .count('book.id as count')
+      .sum('book.price as sum')
+      .andWhere('status', 'P')
+      .groupBy('book.id')
   }
 
 }

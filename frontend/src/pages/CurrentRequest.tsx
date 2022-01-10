@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useEffect, useState} from "react";
-import { closeRequest, getOpenRequest, updateRequest } from '../services/RequestService';
+import { closeRequest, getRequestPdfUrl, getOpenRequest, updateRequest } from '../services/RequestService';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -159,8 +159,29 @@ export default function CurrentRequest() {
           severity: 'error'
         })
       })  
+    }) 
+  }
+
+  const handleGoToPdf = () => {
+    const userId = getUserId();
+
+    const requestInfo = getRequesInfo()
+
+    updateRequest(userId, requestInfo).then(() => {
+      setStatusPopup({...statusPopup, 
+        open: true, 
+        message: SAVE_SUCCESS_MSG,
+        severity: 'success'
+      })
+      window.location.href = getRequestPdfUrl(request.id);
     })
-    
+    .catch(err => {
+      setStatusPopup({...statusPopup, 
+        open: true, 
+        message: SAVE_ERROR_MSG,
+        severity: 'error'
+      })
+    })
   }
 
   const handleSuccessClose = (event : any, reason: any) => {
@@ -277,7 +298,8 @@ export default function CurrentRequest() {
               <Grid item xs={4}>
                 <Button 
                   fullWidth
-                  href={'/pdf?id=' + request.id}
+                  // href={getRequestPdfUrl(request.id)}
+                  onClick={handleGoToPdf}
                   variant="outlined"
                 >Gerar PDF</Button>
               </Grid>
@@ -394,7 +416,7 @@ export default function CurrentRequest() {
         <DialogActions>
           <Button onClick={handleCloseCancel}>Cancelar</Button>
           <Button onClick={handleCloseConfirm} autoFocus>
-            Fechar
+            Fechar Pedido
           </Button>
         </DialogActions>
       </Dialog>

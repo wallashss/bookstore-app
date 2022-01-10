@@ -15,17 +15,25 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { getUserId } from '../services/SessionService';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
-import { addItem } from '../services/RequestItemService';
 import NavBar from '../components/NavBar';
 import { Typography } from '@mui/material';
 import AlertPopup from '../components/AlertPopup';
-import { getPendingBooks, updatePendingBooksStatus } from '../services/PendingService';
+import { getPendingBooks, 
+        getPendingPublishers, 
+        updatePendingBooksStatus, 
+        setPendingPublisherRequested,
+        getPendingPublisherPdfUrl } from '../services/PendingService';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import CircularProgress from '@mui/material/CircularProgress';
-
+import Grid from '@mui/material/Grid';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 type BookRow = {
   id: number,
@@ -46,10 +54,6 @@ const statusMap : any = {
   'C': 'cancelado'
 }
 const theme = createTheme();
-const Alert = React.forwardRef(function Alert(props: any, ref: any) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
 
 const LOAD_ERROR_MSG = 'Erro ao carregar a página! Não será possível adicionar itens.'
 
@@ -59,12 +63,19 @@ export default function PendingBooks({all} : {all: boolean}) {
   const [rows, setRows] = useState([] as BookRow[])
   const [rowsLoading, setRowsLoading] = useState([] as boolean[])
   const [search, setSearch] = useState(searchParams.get('search') as string)
+  const [publishers, setPublishers] = useState([] as {id: number, name: string}[])
+  const [selectedPublisher, setSelectedPublisher] = useState(0)
+  const [selectedPublisherName, setSelectedPublisherName] = useState("")
+  const [openConfirm, setOpenConfirm] = useState(false)
+  const [buttonsDisable, setButtonsDisable] = useState(true) 
 
+  
   const [statusPopup, setStatusPopup] = useState({
     open: false,
     severity: 'error',
     message: ''
   });
+
 
   const loadBooks = () => {
     const userId = getUserId();
@@ -72,6 +83,22 @@ export default function PendingBooks({all} : {all: boolean}) {
     getPendingBooks(all ? null : userId).then(pendingBooks => {
       setRows(pendingBooks)
       setRowsLoading(pendingBooks.map(() => false))
+
+      return getPendingPublishers()
+    })
+    .then((publishers : any) => {
+      if(publishers.length) {
+        const [first] = publishers;
+        setSelectedPublisher(first.id)
+        setSelectedPublisherName(first.name)
+        setButtonsDisable(false)
+      }
+      else {
+        setSelectedPublisher(0)
+        setSelectedPublisherName('Editora')
+        setButtonsDisable(true)
+      }
+      setPublishers(publishers)
     })
     .catch(err => {
       setStatusPopup({...statusPopup, 
@@ -82,6 +109,8 @@ export default function PendingBooks({all} : {all: boolean}) {
       console.log(err);
     })
   }
+
+
 
   useEffect(() => {
     loadBooks();
@@ -123,6 +152,12 @@ export default function PendingBooks({all} : {all: boolean}) {
     )
   }
 
+  const setAllRequested = () => {
+    setOpenConfirm(true)
+    
+  }
+
+
   const handleChangeStatus = (idx: number, value: string) => {
 
     setStatusForRow(idx, true)
@@ -130,8 +165,6 @@ export default function PendingBooks({all} : {all: boolean}) {
     const pendingBookId = row.id 
 
     updatePendingBooksStatus(pendingBookId, value).then(() => {
-
-      console.log("ok")
 
       setRows([...rows.slice(0, idx), 
         {...rows[idx], status: value as any}, 
@@ -155,13 +188,100 @@ export default function PendingBooks({all} : {all: boolean}) {
 
   }
 
+  const handleCloseCancel = () => {
+    setOpenConfirm(false)
+  }
+
+  const handleCloseConfirm  = () => {
+    setOpenConfirm(false)
+    setPendingPublisherRequested(selectedPublisher).then(() => {
+      setStatusPopup({...statusPopup, 
+        open: true, 
+        message: 'Todos foram colocados como pedidos',
+        severity: 'success'
+      })
+      loadBooks()
+    }).catch(err=> {
+      setStatusPopup({...statusPopup, 
+        open: true, 
+        message: LOAD_ERROR_MSG,
+        severity: 'error'
+      })
+    })
+  }
+
+  const handleChangePublisher = (e : any) => {
+
+    const publisherId = Number(e.target.value)
+    const [publisher] = publishers.filter(e => e.id === publisherId)
+
+    console.log("publisher", publisherId, publisher)
+    setSelectedPublisher(publisherId)
+    setSelectedPublisherName(publisher?.name || 'Editora')
+  }
+
   return (
     <div style={{ height: 500, width: '100%' }}>
       <ThemeProvider theme={theme}>
         <NavBar></NavBar>
         <Container>
-        <Typography variant='h4'sx={{mt: 2}} align='left'>Minhas Pendências</Typography>
+        <Typography 
+          variant='h4'
+          sx={{mt: 2}} 
+          align='left'>
+            { all ? 'Todas Pendências' : 'Minhas Pendências'}
+        </Typography>
           <CssBaseline />
+          {
+            all && 
+            <Box sx={{mt: 2}}>
+              <Grid container spacing={1} >
+                <Grid item xs={3}>
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Editora</InputLabel>
+                    <Select
+                      id="demo-simple-select"
+                      label="Editora"
+                      size="small"
+                      disabled={buttonsDisable}
+                      onChange={handleChangePublisher}
+                      value={selectedPublisher}
+                    >
+                      {
+                        publishers.map(p => 
+                          <MenuItem value={p.id}>{p.name}</MenuItem>
+                        )
+                      }
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={2}>
+                  <Button 
+                    fullWidth
+                    variant="outlined"
+                    disabled={buttonsDisable}
+                    href={getPendingPublisherPdfUrl(selectedPublisher)}
+                    // onClick={handleClickSave}
+                  >Gerar PDF</Button>
+                </Grid>
+                {/* <Grid item xs={2}>
+                  <Button 
+                    fullWidth
+                    variant="outlined"
+                    // onClick={handleClickSave}
+                  >Gerar CSV</Button>
+                </Grid> */}
+                <Grid item xs={3}>
+                  <Button 
+                    fullWidth
+                    variant="outlined"
+                    disabled={buttonsDisable}
+                    onClick={setAllRequested}
+                  >Colocar todos como pedido</Button>
+                </Grid>
+              </Grid>
+            </Box>
+          }
           <Box
             component="form" 
             onSubmit={handleSearch}
@@ -257,6 +377,27 @@ export default function PendingBooks({all} : {all: boolean}) {
           onClose={handleAlertClose}
         >
         </AlertPopup>
+        <Dialog
+          open={openConfirm}
+          onClose={handleCloseCancel}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Colocar todos como pedido?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+            {`Todos os livros da editor "${selectedPublisherName}" serão colocados como pedido. Confirma?`}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseCancel}>Cancelar</Button>
+            <Button onClick={handleCloseConfirm} autoFocus>
+              Confirmar
+            </Button>
+          </DialogActions>
+        </Dialog>
         
       </ThemeProvider>
     </div>

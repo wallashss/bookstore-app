@@ -1,5 +1,6 @@
 
 export enum RequestItemStatus {
+  None='',
   Pending='P',
   Requested='R',
   Arrived='A' ,

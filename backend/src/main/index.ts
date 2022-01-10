@@ -16,6 +16,10 @@ import InfoControler from '../controllers/InfoController';
 import QueryController from '../controllers/QueryController';
 import PendingBookRepository from '../repositories/PendingBookRepository';
 import PendingController from '../controllers/PendingController';
+import RequestPdfService from '../services/RequestPdfService';
+import PendingBooksPdfService from '../services/PendingBooksPdfService';
+import PublisherRepository from '../repositories/PublisherRepository'
+import { isInt8Array } from 'util/types';
 
 async function main() {
 
@@ -26,14 +30,18 @@ async function main() {
   const requestRepo = new RequestRepository(dbConnection)
   const requestItemRepo = new RequestItemRepository(dbConnection)
   const pendingBookRepo = new PendingBookRepository(dbConnection)
+  const publisherRepo = new PublisherRepository(dbConnection)
+
+  const requestPdfService = new RequestPdfService(requestRepo, requestItemRepo)
+  const pendingBooksPdfService = new PendingBooksPdfService(pendingBookRepo, publisherRepo)
 
   const httpServer = new HttpServer(env.host, env.port);
   new BooksController(httpServer, booksRepo)
   new UserControler(httpServer, usersRepo)
   new LoginController(httpServer, usersRepo)
-  new RequestControler(httpServer, requestRepo, requestItemRepo)
+  new RequestControler(httpServer, requestRepo, requestItemRepo, pendingBookRepo, requestPdfService)
   new RequestItemController(httpServer, requestItemRepo)
-  new PendingController(httpServer, pendingBookRepo)
+  new PendingController(httpServer, pendingBookRepo, pendingBooksPdfService)
   new InfoControler(httpServer, env.port)
   new QueryController(httpServer, dbConnection)
   await httpServer.start()
