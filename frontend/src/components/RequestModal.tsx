@@ -15,7 +15,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { DataGrid } from '@mui/x-data-grid';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import CircularProgress from '@mui/material/CircularProgress';
+import { updatePendingBooksStatus, } from '../services/PendingService';
 
 const style = {
   position: 'absolute',
@@ -37,23 +40,53 @@ type PropsType = {
   requestId: number
 }
 
-const columns = [
-  { field: 'idx', headerName: '#' },
-  { field: 'id', headerName: 'ID' },
-  { field: 'publisherCode', headerName: 'Cod. Ed.'},
-  { field: 'name', headerName: 'Nome'},
-  { field: 'publisherName', headerName: 'Editora' },
-  { field: 'currentPrice', headerName: 'Preço' },
-];
-
 export default function RequestModal({open, onClose, requestId} : PropsType) {
 
   const [rows, setRows] = React.useState([] as BookRow[])
   const [request, setRequest] = React.useState({} as any)
+  const [rowsLoading, setRowsLoading] = React.useState([] as boolean[])
   const getTotal = () => {
     const sum =  request.books?.reduce((sum : number, b : any) => sum + b.currentPrice , 0) || 0
 
     return sum + (Number(request.wrapPrice) ?? 0) - (request.discount ?? 0 )
+  }
+
+
+  const setStatusForRow = (idx: number, status: boolean) => {
+    setRowsLoading([...rowsLoading.slice(0, idx), 
+      status, 
+      ...rowsLoading.slice(idx+1)]
+    )
+  }
+
+  const handleChangeStatus = (idx: number, value: string) => {
+
+    setStatusForRow(idx, true)
+    const row = rows[idx]
+    const pendingBookId = row.id 
+
+    updatePendingBooksStatus(pendingBookId, value).then(() => {
+
+      setRows([...rows.slice(0, idx), 
+        {...rows[idx], status: value as any}, 
+        ...rows.slice(idx+1)]
+      )
+      // setStatusPopup({...statusPopup, 
+      //   open: true,
+      //   message: `"${row.name}" está como ${statusMap[value]}`,
+      //   severity: 'success'
+      //  });
+       setStatusForRow(idx, false)
+    })
+    .catch(err => {
+      console.log(err)
+      // setStatusPopup({...statusPopup, 
+      //   open: true,
+      //   message: `Error ao atualizar o status de ${row.name}`,
+      //   severity: 'error'
+      //  });
+    })
+
   }
 
   React.useEffect(() => {
@@ -121,14 +154,6 @@ export default function RequestModal({open, onClose, requestId} : PropsType) {
               />
             </Grid>
           </Grid>
-
-          {/* <DataGrid
-            rows={rows}
-            columns={columns}
-            pageSize={3}
-            rowsPerPageOptions={[5]}
-            disableSelectionOnClick
-          /> */}
           <TableContainer component={Paper} sx={{mt: 2, mb: 4}}>
           <Table sx={{ minWidth: 650}} aria-label="simple table">
             <TableHead>
@@ -139,6 +164,7 @@ export default function RequestModal({open, onClose, requestId} : PropsType) {
                 <TableCell>Nome</TableCell>
                 <TableCell align='center'>Editora</TableCell>
                 <TableCell align='center'>Preço</TableCell>
+                <TableCell align='center'>Ação</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -154,6 +180,33 @@ export default function RequestModal({open, onClose, requestId} : PropsType) {
                   <TableCell align='center'>{row.publisherName}</TableCell>
                   <TableCell align='center'>{`R$ ${row.currentPrice.toFixed(2)}`}</TableCell>
                   <TableCell align='center'>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={row.status}
+                      disabled={rowsLoading[idx]}
+                      label="Age"
+                      onChange={e => handleChangeStatus(idx, e.target.value)}
+                    >
+                      <MenuItem value='P'>Pendente</MenuItem>
+                      <MenuItem value='R'>Pedido</MenuItem>
+                      <MenuItem value='A'>Chegou</MenuItem>
+                      <MenuItem value='D'>Entregue</MenuItem>
+                      <MenuItem value='C'>Cancelado</MenuItem>
+                    </Select>
+                    {
+                        rowsLoading[idx] && 
+                        <CircularProgress
+                          size={24}
+                          sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            marginTop: '-12px',
+                            marginLeft: '-12px',
+                          }}
+                        />
+                      }
                   </TableCell>
                 </TableRow>
               ))}

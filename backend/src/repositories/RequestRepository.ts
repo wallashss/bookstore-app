@@ -48,6 +48,7 @@ export default class RequestRepository {
       )
       .leftJoin('seller', 'seller.id', 'book_request.sellerId')
       .andWhere('book_request.isClosed', '=', true)
+      .orderBy('book_request.requestDate', 'desc')
       
     const query = all ?
       mainQuery :

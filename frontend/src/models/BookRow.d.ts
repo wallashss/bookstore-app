@@ -6,5 +6,6 @@ export type BookRow = {
   name: string,
   bookId: number, 
   publisherName: string,
-  currentPrice: number
+  currentPrice: number,
+  status: 'P' | 'R' | 'A' | 'D' | 'C'
 }

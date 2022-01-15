@@ -5,10 +5,11 @@ import path from 'path'
 
 const filepath = path.resolve('../db/migrations');
 
+console.log(process.env.DB_PATH)
 const config: Knex.Config = {
   client: 'sqlite3',
   connection: {
-    filename: '../data/bookstore.db'
+    filename: process.env.DB_PATH || '../data/bookstore.db'
   },
   migrations: {
     directory: filepath,

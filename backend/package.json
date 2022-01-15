@@ -4,13 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node -r dotenv/config dist/main/index.js",
+    "launch": "npm run db:backup && npm run db:migrate-up-prod && npm run start",
+    "start": "node -r dotenv/config dist/src/main/index.js",
     "build": "tsc",
     "dev": "nodemon src/main/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "db:backup-dev": "ts-node -r dotenv/config db/backup.ts",
+    "db:backup": "node -r dotenv/config db/backup.js",
     "db:migrate-new": "NODE_ENV=migration knex --knexfile db/knexfile.ts migrate:make -x ts",
     "db:migrate-up": "NODE_ENV=migration FILENAME=books.db knex --knexfile db/knexfile.ts migrate:latest",
-    "db:migrate-up-prod": "NODE_ENV=migration FILENAME=books.db knex --knexfile db/knexfile.js migrate:latest",
+    "db:migrate-up-prod": "NODE_ENV=migration DB_PATH=../../data/bookstore.db knex --knexfile dist/db/knexfile.js migrate:latest",
     "db:migrate-down": "NODE_ENV=migration knex --knexfile db/knexfile.ts migrate:rollback",
     "db:migrate-list": "NODE_ENV=migration knex --knexfile db/knexfile.ts migrate:list"
   },
@@ -29,6 +32,7 @@
     "typescript": "^4.5.4"
   },
   "dependencies": {
+    "aws-sdk": "^2.1058.0",
     "axios": "^0.24.0",
     "cors": "^2.8.5",
     "csv": "^6.0.5",
