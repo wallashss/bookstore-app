@@ -13,6 +13,7 @@ build-back:
 package:
 		mkdir -p build
 		cp -r backend/dist build/dist
+		cp -r backend/dist/db build/db
 		cp backend/package.json build
 		cp backend/package-lock.json build
 		cp -r frontend/build build/web

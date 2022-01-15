@@ -4,13 +4,12 @@ import path from 'path'
 
 import dotenv from 'dotenv'
 
-dotenv.config({path: path.resolve('../.env')});
-
-console.log()
-
+const envFilepath = path.join(process.cwd(), '.env')
 const dbPath = process.env.DB_PATH ? 
-  path.resolve(path.join('../', process.env.DB_PATH)) :
+  path.resolve(path.join(process.cwd(), process.env.DB_PATH)) :
   null
+
+dotenv.config({path: envFilepath});
 
 const migrationsDir = path.resolve('../db/migrations');
 
