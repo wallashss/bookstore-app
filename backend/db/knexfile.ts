@@ -2,17 +2,25 @@
 import {Knex} from 'knex'
 import path from 'path'
 
+import dotenv from 'dotenv'
 
-const filepath = path.resolve('../db/migrations');
+dotenv.config({path: path.resolve('../.env')});
 
-console.log(process.env.DB_PATH)
+console.log()
+
+const dbPath = process.env.DB_PATH ? 
+  path.resolve(path.join('../', process.env.DB_PATH)) :
+  null
+
+const migrationsDir = path.resolve('../db/migrations');
+
 const config: Knex.Config = {
   client: 'sqlite3',
   connection: {
-    filename: process.env.DB_PATH || '../data/bookstore.db'
+    filename: dbPath || '../data/bookstore.db'
   },
   migrations: {
-    directory: filepath,
+    directory: migrationsDir,
     tableName: `bookstore_migrations`
   },
   useNullAsDefault: true
@@ -22,4 +30,5 @@ const out = {
   migration: config
 }
 
-export default out
+module.exports = config
+// export default out
