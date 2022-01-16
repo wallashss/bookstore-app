@@ -16,6 +16,9 @@ package:
 		cp -r backend/dist/db build/db
 		cp backend/package.json build
 		cp backend/package-lock.json build
+		mkdir build/bundle
+		cp -r bundle/scripts build/bundle/scripts
+		cp bundle/package.json build/bundle/package.json
 		cp -r frontend/build build/web
 		cd build && zip -r release.zip .
 		cp build/release.zip .

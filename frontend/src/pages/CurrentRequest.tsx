@@ -110,6 +110,7 @@ export default function CurrentRequest() {
       notes : request.notes,
       wrapPrice : request.wrapPrice,
       discount : request.discount,
+      whatsapp: request.whatsapp
     };
   }
 
@@ -239,13 +240,22 @@ export default function CurrentRequest() {
                 onChange={e => setRequest({...request, clientCpf: e.target.value})}
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={3}>
               <TextField 
                 name='phone'
                 fullWidth
                 label="Telefone" 
                 value={request.clientPhone || ""}
                 onChange={e => setRequest({...request, clientPhone: e.target.value})}
+                />
+              </Grid>
+              <Grid item xs={3}>
+              <TextField 
+                name='whatsapp'
+                fullWidth
+                label="whatsapp" 
+                value={request.whatsapp || ""}
+                onChange={e => setRequest({...request, whatsapp: e.target.value})}
                 />
               </Grid>
               <Grid item xs={6}>

@@ -12,9 +12,22 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import { getUser, logout } from '../services/SessionService';
+import { getUser, getUserId, logout } from '../services/SessionService';
 import { getServerInfo } from '../services/InfoService';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { styled } from '@mui/material/styles';
+import Badge from '@mui/material/Badge';
+import { getBookRequestCount, addOnRequestCountChange, setBookRequestCount } from '../services/GlobalSingleton'
+import { getOpenRequest } from '../services/RequestService';
 
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: -3,
+    top: 13,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 4px',
+  },
+}));
 
 type PageType = {
   title: string,
@@ -43,6 +56,16 @@ const NavBar = () => {
   const [settings, setSettings] = React.useState([] as any[]);
   const [avatarLetter, setAvatarLetter] = React.useState("??");
   const [serverIp, setServerIp] = React.useState("");
+  const [cartCount, setCartCount] = React.useState(0);
+  const [showCart, setShowCart] = React.useState(false);
+
+  useEffect(() => {
+    const userId = getUserId();
+    getOpenRequest(userId).then((request) => {
+      setBookRequestCount(request.books.length);
+      setCartCount(request.books.length)
+    })
+  })
 
   const handleOpenUserMenu = (event : any) => {
     setAnchorElUser(event.currentTarget);
@@ -51,7 +74,6 @@ const NavBar = () => {
   const handleCloseNavMenu = (e: any) => {
     setAnchorElNav(null);
   };
-
   
   const handleClickMenu = (key: string) => {
     setAnchorElNav(null);
@@ -88,16 +110,16 @@ const NavBar = () => {
 
       const [a, b] = user.name.split(' ')
       setAvatarLetter(`${a[0]}${(b || "")[0] || ""}`)
+      setShowCart(true)
     }
     else {
       setPages(onlyPublicPages)
       setSettings([
         {title: 'Entrar', key: 'login'}
       ])
+      setShowCart(false)
     }
   },[])
-
-
 
   return (
     <AppBar position="static">
@@ -113,6 +135,7 @@ const NavBar = () => {
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: {md: 'flex' } }}>
+              
             {pages.map((page) => (
               <Button
                 key={page.title}
@@ -126,6 +149,13 @@ const NavBar = () => {
           </Box>
 
           <Box sx={{ flexGrow: 0, verticalAlign: 'middle', display: {md: 'flex' } }}>
+            {showCart && 
+              <IconButton aria-label="cart" href='/current-request' sx={{mr: 2}}>
+                <StyledBadge badgeContent={cartCount} color="error">
+                  <ShoppingCartIcon />
+                </StyledBadge>
+              </IconButton>  
+            }
             <Typography sx={{mr: 2}}>{serverIp}</Typography>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

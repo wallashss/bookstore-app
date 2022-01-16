@@ -19,7 +19,8 @@ import PendingController from '../controllers/PendingController';
 import RequestPdfService from '../services/RequestPdfService';
 import PendingBooksPdfService from '../services/PendingBooksPdfService';
 import PublisherRepository from '../repositories/PublisherRepository'
-import { isInt8Array } from 'util/types';
+import ServerInfoService from '../services/ServerInfoService'
+import publishPage from '../infrastructure/s3/PublishPage'
 
 async function main() {
 
@@ -31,6 +32,7 @@ async function main() {
   const requestItemRepo = new RequestItemRepository(dbConnection)
   const pendingBookRepo = new PendingBookRepository(dbConnection)
   const publisherRepo = new PublisherRepository(dbConnection)
+  const serverInfoService = new ServerInfoService()
 
   const requestPdfService = new RequestPdfService(requestRepo, requestItemRepo)
   const pendingBooksPdfService = new PendingBooksPdfService(pendingBookRepo, publisherRepo)
@@ -42,10 +44,19 @@ async function main() {
   new RequestControler(httpServer, requestRepo, requestItemRepo, pendingBookRepo, requestPdfService)
   new RequestItemController(httpServer, requestItemRepo)
   new PendingController(httpServer, pendingBookRepo, pendingBooksPdfService)
-  new InfoControler(httpServer, env.port)
+  new InfoControler(httpServer, serverInfoService, env.port)
   new QueryController(httpServer, dbConnection)
   await httpServer.start()
-  
+
+  publishPage(env.page.bucket, 
+    env.page.key,
+    env.port,
+    serverInfoService).then(() => {
+
+  })
+  .catch(err => {
+    console.log(err)
+  })
 }
 
 main()
