@@ -126,14 +126,23 @@ export default function RequestModal({open, onClose, requestId} : PropsType) {
               value={request.clientCpf || "--"}
               />
             </Grid>
-            <Grid item xs={6}>
-            <TextField 
-              name='phone'
-              fullWidth
-              label="Telefone" 
-              disabled={true}
-              value={request.clientPhone || "--"}
-              />
+            <Grid item xs={3}>
+              <TextField 
+                name='phone'
+                fullWidth
+                label="Telefone" 
+                disabled={true}
+                value={request.clientPhone || "--"}
+                />
+            </Grid>
+            <Grid item xs={3}>
+              <TextField 
+                name='whatsapp'
+                fullWidth
+                label="Whatsapp" 
+                disabled={true}
+                value={request.whatsapp || "--"}
+                />
             </Grid>
             <Grid item xs={6}>
               <TextField 

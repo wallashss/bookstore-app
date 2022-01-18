@@ -1,6 +1,4 @@
-
 import * as AWS from 'aws-sdk'
-import path from 'path'
 import fs from 'fs'
 
 const Bucket = process.env.BACKUP_DB_BUCKET
@@ -16,14 +14,17 @@ const date = new Date()
 const day = `${date.getFullYear()}-${ ('00' +(date.getMonth()+1)).slice(-2) }-${ ('00' + date.getDate()).slice(-2)}`
 const timestamp = date.toISOString().replace(/[\:\-\.z]/ig, '');
 
+const Key = Path + day + "/" + timestamp + '.db'
 
+console.log(Key)
 s3.putObject({
-  Bucket, Key: Path + "/" + day + "/" + timestamp + '.db', 
+  Bucket, Key, 
   Body: db
 }).promise()
 .then(() => {
   console.log("Backup Done")
 })
 .catch(err => {
+  console.log("Backup Failed")
   console.log(err)
 })

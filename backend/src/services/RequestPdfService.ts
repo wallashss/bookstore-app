@@ -84,7 +84,8 @@ export default class RequestPdfService {
     doc.text(`Data: ${new Date(request.requestDate).toLocaleDateString()}`)
     doc.text(`Atendente: ${request.sellerName || "--"}`)
     doc.text(`Cliente: ${request.client || "--"}`)
-    doc.text(`Telefone ${request.clientPhone || "--"}`)
+    doc.text(`Telefone: ${request.clientPhone || "--"}`)
+    doc.text(`Whatsapp: ${request.whatsapp || "--"}`)
 
     doc.moveDown()
     // Books Table

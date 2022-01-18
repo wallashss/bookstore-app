@@ -1,6 +1,6 @@
 
 
-const ApiUrl = 'http://localhost:5000/api'
+const ApiUrl = '/api'
 export  {
   ApiUrl
 }
