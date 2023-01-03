@@ -5,12 +5,12 @@ export default class DBConnection {
 
 
   db: Knex
-  constructor() {
+  constructor(filename : string) {
     this.db = knex(
       {
         client: 'sqlite3',
         connection: {
-          filename: 'data/bookstore.db'
+          filename: filename
         },
         useNullAsDefault: true
       }

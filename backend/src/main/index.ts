@@ -24,7 +24,7 @@ import publishPage from '../infrastructure/s3/PublishPage'
 
 async function main() {
 
-  const dbConnection = new DBConnection();
+  const dbConnection = new DBConnection(env.db.filename);
   const booksRepo = new BooksRepository(dbConnection);
 
   const usersRepo = new UsersRepository(dbConnection);
