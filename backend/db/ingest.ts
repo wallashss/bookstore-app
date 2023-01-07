@@ -4,14 +4,19 @@ import path from 'path'
 
 import dotenv from 'dotenv'
 
-const envFilepath = path.join(process.cwd(), '.env')
-const dbPath = process.env.DB_PATH ? 
-  path.resolve(path.join(process.cwd(), process.env.DB_PATH)) :
-  null
+console.log(process.cwd())
+const envFilepath = path.resolve(path.join(process.cwd(), '../.env'))
+console.log(envFilepath)
 
 dotenv.config({path: envFilepath});
 
-const migrationsDir = path.resolve('../db/migrations');
+const dbPath = process.env.DB_PATH ? 
+    process.env.DB_PATH:
+    null
+
+console.log("DB PATH: ", dbPath || `Default: ../data/bookstore.db`)
+
+const migrationsDir = path.resolve('../db/ingestions');
 
 const config: Knex.Config = {
   client: 'sqlite3',
@@ -20,7 +25,7 @@ const config: Knex.Config = {
   },
   migrations: {
     directory: migrationsDir,
-    tableName: `bookstore_migrations`
+    tableName: `ingestions_migrations`
   },
   useNullAsDefault: true
 }

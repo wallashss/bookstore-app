@@ -11,6 +11,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:backup-dev": "ts-node -r dotenv/config db/backup.ts",
     "db:backup": "node -r dotenv/config dist/db/backup.js",
+    "db:update": "node -r dotenv/config db/update.js && knex --knexfile db/ingest.js migrate:latest",
+    "db:update-dev": "ts-node -r dotenv/config db/update.ts && knex --knexfile db/ingest.ts migrate:latest",
     "db:fix-migrations-dev": "ts-node -r dotenv/config db/fix-migrations",
     "db:fix-migrations": "node -r dotenv/config dist/db/fix-migrations",
     "db:migrate-new": "knex --knexfile db/knexfile.ts migrate:make -x ts",

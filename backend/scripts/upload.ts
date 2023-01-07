@@ -2,7 +2,21 @@ import { Knex, knex } from "knex"
 
 import fs from 'fs'
 
-const data = JSON.parse(fs.readFileSync(process.argv[2], 'utf-8'))
+const inputPath = process.argv[2]
+
+const inputData = fs.readFileSync(inputPath, 'utf-8');
+
+console.log(inputData)
+
+const data =  inputPath.endsWith('.tsv') ?
+    inputData.split('\n')
+        .map(l => l.trim())
+        .filter(l => l)
+        .map(l => l.split('\t'))
+    : JSON.parse(inputData)
+
+
+console.log(data);
 
 const publisherId = process.argv[3]
 
