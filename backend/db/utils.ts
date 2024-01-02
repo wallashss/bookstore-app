@@ -2,8 +2,6 @@ import { Knex, knex } from "knex"
 
 import fs from 'fs'
 
-import path from 'path'
-
 export async function ingest(db : Knex, inputPath : string)
 {
 

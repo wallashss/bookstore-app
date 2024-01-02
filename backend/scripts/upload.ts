@@ -37,13 +37,23 @@ async function main() {
       }
     )
     
-    const rows : any[] = data.map( (r: string[]) => {
+
+    const rows : any[] = inputPath.endsWith('.tsv') ? data.map( (r: string[]) => {
         return {
             name: r[0].trim(),
             indexName: r[0].trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
             price: Number(String(r[1]).replace(',', '.').replace(/[r\s\$]*/ig, '')),
             publisherId: Number(publisherId),
             publisherCode: r[2] ? String(r[2]).trim() : undefined
+        }
+    }) :
+    data.map((r : any) => {
+        return {
+            name: r.name,
+            indexName: r.name.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
+            price: Number(String(r.price).replace(',', '.').replace(/[r\s\$]*/ig, '')),
+            publisherId: Number(r.publisherId),
+            publisherCode: r.publisherCode ? String(r.publisherCode).trim() : undefined
         }
     })
 

@@ -152,8 +152,8 @@ export default class RequestPdfService {
     // Footer
 
     doc.fontSize(10)
-    doc.text("Pedidos de livros prazo de entrega em até 90 dias" +
-    "para livros que estiverem em falta na editora, após este prazo" +
+    doc.text("Pedidos de livros prazo de entrega em até 90 dias " +
+    "para livros que estiverem em falta na editora, após este prazo " +
     "o cliente pode ser reembolsado ou ressacido em espécie ou em " + 
     "mercadoria.")
     
