@@ -11,6 +11,6 @@ npm run db:migrate-new
 Start to dev with:
 
 ```
-npm run 
+npm run dev
 ```
 
