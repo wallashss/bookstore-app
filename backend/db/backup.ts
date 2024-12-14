@@ -1,11 +1,11 @@
-import * as AWS from 'aws-sdk'
+import { S3 } from '@aws-sdk/client-s3';
 import fs from 'fs'
 
 const Bucket = process.env.BACKUP_DB_BUCKET
 const Path = process.env.BACKUP_DB_KEY
 const dbPath = process.env.DB_PATH
 
-const s3 = new AWS.S3()
+const s3 = new S3()
 
 const db = fs.readFileSync(dbPath)
 
@@ -20,7 +20,7 @@ console.log(Key)
 s3.putObject({
   Bucket, Key, 
   Body: db
-}).promise()
+})
 .then(() => {
   console.log("Backup Done")
 })

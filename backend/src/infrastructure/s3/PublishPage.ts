@@ -1,5 +1,5 @@
 import ServerInfoService from "services/ServerInfoService"
-import * as AWS from 'aws-sdk'
+import { S3 } from "@aws-sdk/client-s3";
 
 export default async function publishPage(
   bucket: string,
@@ -12,7 +12,7 @@ export default async function publishPage(
 
     const ip = serverInfoService.getIp()
     
-    const s3 = new AWS.S3()
+    const s3 = new S3()
     const page = `
     <!DOCTYPE html>
     <html lang="en">
@@ -32,7 +32,7 @@ export default async function publishPage(
     s3.putObject({
       Bucket: bucket, Key: key, 
       Body: page
-    }).promise()
+    })
     .then(() => {
       console.log("Published page")
     })
